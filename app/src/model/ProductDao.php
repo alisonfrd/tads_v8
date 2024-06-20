@@ -1,24 +1,21 @@
 <?php
 
-class ProductDao
-{
+class ProductDao{
     const table = 'product';
 
     public function __construct(){}
 
-    public function list()
-    {
+    public function list(){
         $collection = [];
-
+    
         $db = Database::singleton();
-
+    
         $sql = 'SELECT * FROM ' . self::table;
-
+    
         $sth = $db->prepare($sql);
         $sth->execute();
-
-        while ($obj = $sth->fetch(PDO::FETCH_OBJ))
-        {
+    
+        while ($obj = $sth->fetch(PDO::FETCH_OBJ)){
             $product = new Product();
             $product->setId($obj->id);
             $product->setName($obj->name);
@@ -26,53 +23,54 @@ class ProductDao
             $product->setDescription($obj->description);
             $product->setImage($obj->image);
             $product->setLink($obj->link);
+            $product->setQRCodeUrl($obj->qr_code_url); // Adicionado
             $collection[] = $product;
         }
-
+    
         return $collection;
     }
+    
 
-    public function add($product)
-    {
+    public function add($product){
         $db = Database::singleton();
 
-        $sql = 'INSERT INTO '. self::table .' (name, price, description) VALUES (?, ?, ?)';
+        $sql = 'INSERT INTO '. self::table .' (name, price, description, qr_code_url) VALUES (?, ?, ?, ?)';
 
         $sth = $db->prepare($sql);
         $sth->bindValue(1, trim($product->getName()), PDO::PARAM_STR);
         $sth->bindValue(2, $product->getPrice(), PDO::PARAM_STR);
         $sth->bindValue(3, trim($product->getDescription()), PDO::PARAM_STR);
+        $sth->bindValue(4, $product->getQRCodeUrl(), PDO::PARAM_STR); // Adicionado
     
         return $sth->execute();
     }
 
-    public function update($product)
-    {
+
+    public function update($product){
         $db = Database::singleton();
-
-        $sql = 'UPDATE ' . self::table . ' SET name = ?, price = ?, description = ? WHERE id = ?';
-
+    
+        $sql = 'UPDATE ' . self::table . ' SET name = ?, price = ?, description = ?, qr_code_url = ? WHERE id = ?'; //Alterado
+    
         $sth = $db->prepare($sql);
         $sth->bindValue(1, trim($product->getName()), PDO::PARAM_STR);
         $sth->bindValue(2, $product->getPrice(), PDO::PARAM_STR);
         $sth->bindValue(3, trim($product->getDescription()), PDO::PARAM_STR);
-        $sth->bindValue(4, $product->getId(), PDO::PARAM_INT);
-
+        $sth->bindValue(4, $product->getQRCodeUrl(), PDO::PARAM_STR); // Adicionado
+        $sth->bindValue(5, $product->getId(), PDO::PARAM_INT);
+    
         return $sth->execute();
-    }
+    } 
 
-    public function getProductById($id)
-    {
+    public function getProductById($id){
         $db = Database::singleton();
-
+    
         $sql = 'SELECT * FROM ' . self::table . ' WHERE id = ?';
-
+    
         $sth = $db->prepare($sql);
         $sth->bindValue(1, $id, PDO::PARAM_INT);
         $sth->execute();
-
-        if ($obj = $sth->fetch(PDO::FETCH_OBJ))
-        {
+    
+        if ($obj = $sth->fetch(PDO::FETCH_OBJ)){
             $product = new Product();
             $product->setId($obj->id);
             $product->setName($obj->name);
@@ -80,6 +78,7 @@ class ProductDao
             $product->setDescription($obj->description);
             $product->setImage($obj->image);
             $product->setLink($obj->link);
+            $product->setQRCodeUrl($obj->qr_code_url); // Adicionado
             return $product;
         }
         return null; // Retorna null se o produto não for encontrado

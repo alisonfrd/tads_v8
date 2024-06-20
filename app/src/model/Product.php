@@ -7,26 +7,10 @@ class Product {
     private $description;
     private $image;
     private $link;
+    private $qrCodeUrl; // Adicione esta propriedade
 
-    public function setImage ($image)
-    {
-        $this->image = $image;
-    }
-
-    public function getImage ()
-    {
-        return $this->image;
-    }
-    public function setLink ($link)
-    {
-        $this->link = $link;
-    }
-
-    public function getLink ()
-    {
-        return $this->link;
-    }
     // Getters and Setters for the properties
+
     public function getId() {
         return $this->id;
     }
@@ -59,15 +43,37 @@ class Product {
         $this->description = $description;
     }
 
+    public function getImage() {
+        return $this->image;
+    }
+
+    public function setImage($image) {
+        $this->image = $image;
+    }
+
+    public function getLink() {
+        return $this->link;
+    }
+
+    public function setLink($link) {
+        $this->link = $link;
+    }
+
+    // Métodos getter e setter para o QR Code URL
+    public function getQRCodeUrl() {
+        return $this->qrCodeUrl;
+    }
+
+    public function setQRCodeUrl($qrCodeUrl) {
+        $this->qrCodeUrl = $qrCodeUrl;
+    }
+
     public static function formatPrice($price) {
-       
         return number_format($price, 2, ',', '.');
     }
-    
-    public function checkImage()
-    {
+
+    public function checkImage() {
         return TRUE;
-        
         $headers = get_headers($this->image);
         if ($headers && strpos($headers[0], '200')) {
             return true;
@@ -75,5 +81,4 @@ class Product {
             return false;
         }
     }
-
 }
